@@ -82,11 +82,13 @@ echo "<!doctype html>
 " > src/index.html
 
 # Update body.hbs
-echo "<h1 class="hello-world">Hello</h1>
-" > src/partials/body.hbs
+echo '<h1 class="hello-world">Hello</h1>
+' > src/partials/body.hbs
 
 # Update style.css
-echo ".hello-world{text-transform: uppercase;}
+echo ".hello-world{
+    text-transform: uppercase;
+}
 " > src/style.css
 
 # npm run dev to start the project
