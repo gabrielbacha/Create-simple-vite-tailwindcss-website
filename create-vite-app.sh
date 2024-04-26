@@ -21,9 +21,10 @@ cd ..
 npm init -y
 jq '. + {"type":"module"}' package.json > temp.json && mv temp.json package.json
 
-npm install vite handlebars vite-plugin-handlebars vite-plugin-live-reload sass --save-dev
+npm install vite handlebars vite-plugin-handlebars vite-plugin-live-reload tailwindcss concurrently sass --save-dev
+npx tailwindcss init
 
-jq '.scripts += {"dev": "vite", "build": "vite build", "preview": "vite preview", "sass": "sass src/sass:src"}' package.json > temp.json && mv temp.json package.json
+jq '.scripts += {"dev":"concurrently \"npx tailwindcss -i ./src/input.css -o ./src/style.css --watch\" \"vite\"", "build": "vite build", "preview": "vite preview", "sass": "sass src/sass:src"}' package.json > temp.json && mv temp.json package.json
 
 echo "import { defineConfig } from 'vite';
 import handlebars from 'vite-plugin-handlebars';
@@ -55,16 +56,27 @@ export default defineConfig({
     css: {
         preprocessorOptions: {
             scss: {
-                additionalData: \`@import 'src/style.scss';\`,
+                additionalData: \`@import 'src/input.scss';\`,
                 includePaths: ['src/'],
             },
         },
     },
 });" > vite.config.js
 
+rm tailwind.config.js
+
+echo "/** @type {import('tailwindcss').Config} */
+module.exports = {
+  content: ['./src/**/*.{html,js}', './src/partials/**/*.{html,js,hbs}'],
+  theme: {
+    extend: {},
+  },
+  plugins: [],
+}" > tailwind.config.js
+
 
 # Update index.html
-echo "<!doctype html>
+echo '<!doctype html>
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
@@ -79,17 +91,19 @@ echo "<!doctype html>
 <script type="module" src="./main.js"></script>
 </body>
 </html>
-" > src/index.html
+' > src/index.html
 
 # Update body.hbs
-echo '<h1 class="hello-world">Hello</h1>
+echo '  <h1 class="text-3xl font-bold underline">
+    Hello world!
+  </h1>
 ' > src/partials/body.hbs
 
-# Update style.css
-echo ".hello-world{
-    text-transform: uppercase;
-}
-" > src/style.css
+# Update input.css
+echo "@tailwind base;
+@tailwind components;
+@tailwind utilities;
+" > src/input.css
 
 # npm run dev to start the project
 npm run dev
