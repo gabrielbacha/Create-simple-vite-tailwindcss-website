@@ -1,41 +1,42 @@
 #!/bin/bash
 
-mkdir vite-project
-cd vite-project
+mkdir vite-project && cd vite-project
 
-mkdir src
-cd src
-mkdir partials
-mkdir sass
-touch index.html
-touch main.js
-touch style.css 
-cd partials
-touch body.hbs
+mkdir src && cd src && touch index.html && touch main.js
+mkdir css && cd css && touch input.css && cd ..
+mkdir partials && cd partials && touch body.hbs && cd ..
 cd ..
-cd sass
-touch style-scss.scss
-cd ..
-cd ..
+
+touch gitignore
+cat <<EOF >> .gitignore
+.log
+.DS_Store
+.env
+node_modules/
+dist/
+out/
+EOF
 
 npm init -y
 jq '. + {"type":"module"}' package.json > temp.json && mv temp.json package.json
 
-npm install vite handlebars vite-plugin-handlebars vite-plugin-live-reload tailwindcss concurrently sass --save-dev
-npx tailwindcss init
+npm install vite handlebars vite-plugin-handlebars vite-plugin-live-reload tailwindcss concurrently vite-plugin-mkcert gh-pages --save-dev
 
-jq '.scripts += {"dev":"concurrently \"npx tailwindcss -i ./src/input.css -o ./src/style.css --watch\" \"vite\"", "build": "vite build", "preview": "vite preview", "sass": "sass src/sass:src"}' package.json > temp.json && mv temp.json package.json
+
+jq '.scripts += {"dev":"concurrently \"npx tailwindcss -i ./src/css/input.css -o ./src/css/style.css --watch\" \"vite\"", "build": "vite build", "preview": "vite preview", "deploy": "gh-pages -d src/dist"}' package.json > temp.json && mv temp.json package.json
 
 echo "import { defineConfig } from 'vite';
 import handlebars from 'vite-plugin-handlebars';
 import liveReload from 'vite-plugin-live-reload';
+import mkcert from 'vite-plugin-mkcert'
 
 export default defineConfig({
     root: 'src/',
-    base: './',
+    base: './', //ADD GITHUB REPO HERE
     server: {  
         host: true, // Open to local network and display URL
         open: !('SANDBOX_URL' in process.env || 'CODESANDBOX_HOST' in process.env),
+        https: true,
     },
     watch: {
         include: './src/partials/**.html'
@@ -52,19 +53,11 @@ export default defineConfig({
             helpers: {},
         }),
         liveReload(['**/*.hbs', '**/*.html']),
+        mkcert(),
     ],
-    css: {
-        preprocessorOptions: {
-            scss: {
-                additionalData: \`@import 'src/input.scss';\`,
-                includePaths: ['src/'],
-            },
-        },
-    },
 });" > vite.config.js
 
-rm tailwind.config.js
-
+npx tailwindcss init && rm tailwind.config.js
 echo "/** @type {import('tailwindcss').Config} */
 module.exports = {
   content: ['./src/**/*.{html,js}', './src/partials/**/*.{html,js,hbs}'],
@@ -81,8 +74,8 @@ echo '<!doctype html>
 <head>
     <meta charset="UTF-8" />
     <title>Project Title</title>
-    <link rel="stylesheet" href="./style-scss.css">    
-    <link rel="stylesheet" href="./style.css">    
+    <link rel="stylesheet" href="./css/style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
 
@@ -103,7 +96,7 @@ echo '  <h1 class="text-3xl font-bold underline">
 echo "@tailwind base;
 @tailwind components;
 @tailwind utilities;
-" > src/input.css
+" > src/css/input.css
 
 # npm run dev to start the project
 npm run dev
