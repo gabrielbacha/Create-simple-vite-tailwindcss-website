@@ -23,7 +23,7 @@ jq '. + {"type":"module"}' package.json > temp.json && mv temp.json package.json
 npm install vite handlebars vite-plugin-handlebars vite-plugin-live-reload tailwindcss concurrently vite-plugin-mkcert gh-pages --save-dev
 
 
-jq '.scripts += {"dev":"concurrently \"npx tailwindcss -i ./src/css/input.css -o ./src/css/style.css --watch\" \"vite\"", "build": "vite build", "preview": "vite preview", "deploy": "gh-pages -d src/dist"}' package.json > temp.json && mv temp.json package.json
+jq '.scripts += {"dev":"concurrently \"npx tailwindcss -i ./src/css/input.css -o ./src/css/style.css --watch\" \"vite\"", "build": "vite build", "preview": "vite preview", "deploy": "gh-pages -d dist"}' package.json > temp.json && mv temp.json package.json
 
 echo "import { defineConfig } from 'vite';
 import handlebars from 'vite-plugin-handlebars';
@@ -37,6 +37,9 @@ export default defineConfig({
         host: true, // Open to local network and display URL
         open: !('SANDBOX_URL' in process.env || 'CODESANDBOX_HOST' in process.env),
         https: true,
+    },
+    build:{
+        outDir: '../dist'
     },
     watch: {
         include: './src/partials/**.html'
