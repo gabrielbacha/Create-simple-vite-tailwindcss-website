@@ -32,6 +32,11 @@ import mkcert from 'vite-plugin-mkcert'
 
 export default defineConfig({
     root: 'src/',
+    resolve: {
+        alias: {
+            '@': '/',
+        },
+    },
     base: './', //ADD GITHUB REPO HERE
     server: {  
         host: true, // Open to local network and display URL
@@ -43,11 +48,6 @@ export default defineConfig({
     },
     watch: {
         include: './src/partials/**.html'
-    },
-    resolve: {
-        alias: {
-            '@': '/src',
-        },
     },
     plugins: [
         handlebars({
