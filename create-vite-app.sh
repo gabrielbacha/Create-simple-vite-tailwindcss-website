@@ -1,5 +1,7 @@
 #!/bin/bash
 
+cd "$(dirname "$0")"
+
 mkdir vite-project && cd vite-project
 
 mkdir src && cd src && touch index.html && touch main.js
