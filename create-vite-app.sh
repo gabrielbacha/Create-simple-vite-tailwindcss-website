@@ -29,7 +29,7 @@ EOF
 npm init -y
 jq '. + {"type":"module"}' package.json > temp.json && mv temp.json package.json
 
-npm install vite handlebars vite-plugin-handlebars vite-plugin-live-reload tailwindcss concurrently vite-plugin-mkcert gh-pages --save-dev
+npm install vite handlebars vite-plugin-handlebars vite-plugin-live-reload tailwindcss@3 concurrently vite-plugin-mkcert gh-pages --save-dev
 
 
 jq '.scripts += {"dev":"concurrently \"npx tailwindcss -i ./src/css/input.css -o ./src/css/style.css --watch\" \"vite --host 0.0.0.0\"", "build": "vite build", "preview": "vite preview", "deploy": "gh-pages -d dist"}' package.json > temp.json && mv temp.json package.json
@@ -106,7 +106,7 @@ echo '  <div class="bg-white">
       <div class="px-6 lg:px-0 lg:pt-4">
         <div class="mx-auto max-w-2xl">
           <div class="max-w-lg">
-            <img class="h-11" src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600" alt="Your Company">
+            <img class="h-11" src="https://tailwindui.com/plus/img/logos/mark.svg?color=indigo&shade=500" alt="Your Company">
             <div class="mt-24 sm:mt-32 lg:mt-16">
               <a href="https://github.com/gabrielbacha/Jekyll-TailwindCSS-Starter-Template" class="inline-flex space-x-6">
                 <span class="rounded-full bg-indigo-600/10 px-3 py-1 text-sm font-semibold leading-6 text-indigo-600 ring-1 ring-inset ring-indigo-600/10">Updates</span>
